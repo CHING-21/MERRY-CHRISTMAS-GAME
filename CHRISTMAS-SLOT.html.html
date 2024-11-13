@@ -119,7 +119,7 @@
     <script>
         const symbols = ['🍎', '🍇', '🍋', '❤️']; // 四個符號
         const maxSpins = 5; // 初始抽獎次數
-        let remainingSpins = maxSpins; // 剩餘抽獎次數
+        let remainingSpins = maxSpins; // 剩餘次數
         let latestPrize = 0; // 保存最新一次的結果
         let isReplay = false; // 標記是否是重新抽獎
 
@@ -140,7 +140,7 @@
                 isReplay = false;
             }
 
-            // 更新剩餘抽獎次數
+            // 更新剩餘次數
             remainingSpins--;
             document.getElementById('remaining-count').textContent = remainingSpins;
 
