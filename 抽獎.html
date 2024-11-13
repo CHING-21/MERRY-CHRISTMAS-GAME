@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERRY CHRISTMAS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        h1 {
+            color: #ff66b2;
+        }
+        .game-area {
+            flex: 1;
+            text-align: center;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(5, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: #ffd6e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #ff66b2;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        .card.revealed {
+            background-color: #ffffff;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .card.revealed p {
+            font-weight: bold;
+            color: #333;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff66b2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #ff3385;
+        }
+        .record {
+            width: 300px;
+            margin-left: 20px;
+            background-color: #f3f3f3;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .record h2 {
+            margin-bottom: 10px;
+            color: #ff66b2;
+        }
+        .record ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .record ul li {
+            padding: 5px;
+            font-size: 16px;
+            color: #555;
+        }
+        .countdown {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ff66b2;
+        }
+        .countdown span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-area">
+        <h1>MERRY CHRISTMAS</h1>
+        <div class="card-container" id="card-container">
+            <!-- Cards will be generated here -->
+        </div>
+        <div class="button-container">
+            <button class="button" id="reset-btn">再玩一次</button>
+        </div>
+        <div class="countdown">
+            剩餘抽獎次數: <span id="remaining-count">10</span> 次
+        </div>
+    </div>
+    
+    <div class="record">
+        <h2>抽獎記錄</h2>
+        <ul id="reward-record">
+            <!-- Draw results will appear here -->
+        </ul>
+    </div>
+
+    <script>
+        const rewards = [
+            { amount: 5000, count: 1 },
+            { amount: 2000, count: 2 },
+            { amount: 1000, count: 5 },
+            { amount: 500, count: 8 },
+            { amount: 100, count: 4 }
+        ];
+        
+        const cards = [];
+        let drawnCount = 0;
+
+        // Create card elements and assign reward values
+        function initializeGame() {
+            const cardContainer = document.getElementById('card-container');
+            cardContainer.innerHTML = '';
+            cards.length = 0; // Reset card array
+
+            // Add rewards to card array
+            rewards.forEach(reward => {
+                for (let i = 0; i < reward.count; i++) {
+                    cards.push(reward.amount);
+                }
+            });
+
+            // Shuffle the cards
+            shuffle(cards);
+
+            // Generate cards
+            for (let i = 0; i < 20; i++) {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.index = i;
+                card.addEventListener('click', () => handleCardClick(i));
+                cardContainer.appendChild(card);
+            }
+
+            // Reset records and drawn count
+            document.getElementById('reward-record').innerHTML = '';
+            drawnCount = 0;
+            updateCountdown();
+        }
+
+        // Shuffle function
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Handle card click
+        function handleCardClick(index) {
+            if (cards[index] === undefined || drawnCount >= 10) return;
+
+            const card = document.querySelectorAll('.card')[index];
+            const reward = cards[index];
+            card.classList.add('revealed');
+
+            // Show the prize
+            const prizeText = document.createElement('p');
+            prizeText.textContent = `${reward}元`;
+            card.appendChild(prizeText);
+
+            // Add to record
+            const record = document.getElementById('reward-record');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${reward}元`;
+            record.appendChild(listItem);
+
+            // Mark the card as revealed and increment the draw count
+            cards[index] = undefined;
+            drawnCount++;
+            updateCountdown();
+        }
+
+        // Update remaining countdown
+        function updateCountdown() {
+            const remaining = 10 - drawnCount;
+            document.getElementById('remaining-count').textContent = remaining;
+        }
+
+        // Reset the game
+        document.getElementById('reset-btn').addEventListener('click', initializeGame);
+
+        // Start the game
+        initializeGame();
+    </script>
+</body>
+</html>
