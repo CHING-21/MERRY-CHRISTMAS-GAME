@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRISTMAS SLOT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .slot-machine {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            color: #91496d;
+            font-size: 36px;
+        }
+        .slot-reels {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .reel {
+            width: 80px;
+            height: 80px;
+            background-color: #e6e6e6;
+            border-radius: 10px;
+            font-size: 32px;
+            color: #ff66b2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            background-color: #91496d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #91496d;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px; /* 獎勵提示文字縮小 */
+            font-weight: bold;
+            color: #333;
+        }
+        .countdown {
+            font-size: 18px;
+            color: #91496d;
+            margin-top: 20px;
+        }
+        .instructions {
+            font-size: 12px; /* 說明文字縮小 */
+            color: #333;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .replay-button {
+            background-color: #91496d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none; /* 初始隱藏，再玩一次按鈕 */
+        }
+        .replay-button:hover {
+            background-color: #91496d;
+        }
+    </style>
+</head>
+<body>
+    <div class="slot-machine">
+        <h1>CHRISTMAS SLOT</h1>
+        <div class="instructions">
+            <p>說明:</p>
+            <ul>
+                <li>3個愛心 ❤️ = 獎金 + 520元</li>
+                <li>2個愛心 ❤️ = 獎金  - 520元</li>
+                <li>3個蘋果 🍎 = 再玩一次抽獎，結果取高者</li>
+                <li>2個蘋果 🍎 = 再玩一次抽獎，結果取最新</li>
+                <li>3個檸檬 🍋 = 再抽兩張牌</li>
+                <li>3個葡萄 🍇 = 再抽一張牌</li>
+            </ul>
+        </div>
+        <div class="slot-reels">
+            <div class="reel" id="reel-1"><p>🍎</p></div>
+            <div class="reel" id="reel-2"><p>🍇</p></div>
+            <div class="reel" id="reel-3"><p>🍋</p></div>
+        </div>
+        <button class="button" id="spin-btn">START</button>
+        <button class="replay-button" id="replay-btn">再玩一次</button>
+        <div class="result" id="result"> </div>
+        <div class="countdown" id="countdown">剩餘抽獎次數: <span id="remaining-count">5</span></div>
+    </div>
+
+    <script>
+        const symbols = ['🍎', '🍇', '🍋', '❤️']; // 四個符號
+        const maxSpins = 5; // 初始抽獎次數
+        let remainingSpins = maxSpins; // 剩餘抽獎次數
+        let latestPrize = 0; // 保存最新一次的結果
+        let isReplay = false; // 標記是否是重新抽獎
+
+        // 按鈕點擊事件，啟動轉動
+        document.getElementById('spin-btn').addEventListener('click', spin);
+        document.getElementById('replay-btn').addEventListener('click', restartGame); // 再玩一次的按鈕
+
+        // spin 函數：處理旋轉動畫和結果
+        function spin() {
+            if (remainingSpins <= 0 && !isReplay) {
+                // 當剩餘次數用完，顯示「再玩一次」按鈕
+                document.getElementById('replay-btn').style.display = 'block';
+                return;
+            }
+
+            // 如果是再玩一次，先更新為新的一輪
+            if (isReplay) {
+                isReplay = false;
+            }
+
+            // 更新剩餘抽獎次數
+            remainingSpins--;
+            document.getElementById('remaining-count').textContent = remainingSpins;
+
+            // 隱藏結果
+            document.getElementById('result').textContent = '';
+
+            // 取得三個滾輪
+            const reels = document.querySelectorAll('.reel');
+            const result = [];
+
+            // 隨機生成三個符號並顯示
+            for (let i = 0; i < reels.length; i++) {
+                const randomSymbol = getRandomSymbol();
+                reels[i].innerHTML = `<p>${randomSymbol}</p>`;
+                result.push(randomSymbol);
+            }
+
+            // 給用戶一些動畫效果
+            document.getElementById('spin-btn').disabled = true; // 禁用按鈕
+            setTimeout(() => {
+                // 檢查結果
+                handleResult(result);
+                document.getElementById('spin-btn').disabled = false; // 恢復按鈕
+            }, 1000);
+        }
+
+        // 隨機選擇符號
+        function getRandomSymbol() {
+            const randomIndex = Math.floor(Math.random() * symbols.length);
+            return symbols[randomIndex];
+        }
+
+        // 處理抽獎結果
+        function handleResult(result) {
+            const symbolCounts = countSymbols(result);
+            let prize = 0;
+
+            if (symbolCounts['❤️'] === 3) {
+                document.getElementById('result').textContent = '三個愛心！獎金 +520元';
+            } else if (symbolCounts['❤️'] === 2) {
+                document.getElementById('result').textContent = '二個愛心！獎金 -520元';
+            } else if (symbolCounts['🍎'] === 3) {
+                document.getElementById('result').textContent = '三個蘋果！再玩一次抽獎，結果取高者';
+            } else if (symbolCounts['🍎'] === 2) {
+                document.getElementById('result').textContent = '二個蘋果！再玩一次抽獎，結果取最新';
+            } else if (symbolCounts['🍋'] === 3) {
+                document.getElementById('result').textContent = '三個檸檬！再抽二張牌'; 
+            } else if (symbolCounts['🍇'] === 3) {
+                document.getElementById('result').textContent = '三個葡萄！再抽一張牌';
+            }
+
+            updateCountdown();
+        }
+
+        // 計算每個符號出現的次數
+        function countSymbols(result) {
+            const counts = { '🍎': 0, '🍇': 0, '🍋': 0, '❤️': 0 };
+            result.forEach(symbol => counts[symbol]++);
+            return counts;
+        }
+
+        // 更新倒數計時
+        function updateCountdown() {
+            document.getElementById('remaining-count').textContent = remainingSpins;
+        }
+
+        // 再玩一次，重置遊戲
+        function restartGame() {
+            remainingSpins = maxSpins;
+            document.getElementById('remaining-count').textContent = remainingSpins;
+            document.getElementById('replay-btn').style.display = 'none'; // 隱藏再玩一次按鈕
+            document.getElementById('result').textContent = ''; // 清空結果
+            document.querySelectorAll('.reel').forEach(reel => reel.innerHTML = '<p>🍎</p>'); // 重設滾輪
+        }
+    </script>
+</body>
+</html>
