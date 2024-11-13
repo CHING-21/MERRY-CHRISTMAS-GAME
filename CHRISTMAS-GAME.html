@@ -83,32 +83,6 @@
             font-weight: bold;
         }
 
-        /* 抽獎記錄區域設置 */
-        .record {
-            width: 100%;
-            max-width: 350px;
-            background-color: #f3f3f3;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            margin-top: 30px;
-        }
-        .record h2 {
-            margin-bottom: 10px;
-            color: #ff66b2;
-        }
-        .record ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .record ul li {
-            padding: 5px;
-            font-size: 16px;
-            color: #555;
-        }
-
         /* 响应式设计，调整移动设备布局 */
         @media screen and (max-width: 768px) {
             .card-container {
@@ -122,10 +96,6 @@
                 font-size: 14px;
                 padding: 8px 16px;
             }
-            .record {
-                max-width: 300px;
-                margin-top: 20px;
-            }
             h1 {
                 font-size: 20px;
             }
@@ -136,7 +106,7 @@
 
         @media screen and (max-width: 480px) {
             .card-container {
-                grid-template-columns: repeat(4, 1fr); /* 保持4張卡片每行 */
+                grid-template-columns: repeat(4, 1fr); /* 保持4张卡片每行 */
             }
             .card {
                 height: 80px;
@@ -145,10 +115,6 @@
             .button {
                 font-size: 12px;
                 padding: 6px 12px;
-            }
-            .record {
-                width: 100%;
-                max-width: 280px;
             }
             h1 {
                 font-size: 18px;
@@ -171,13 +137,6 @@
         <div class="countdown">
             剩餘抽獎次數: <span id="remaining-count">10</span> 次
         </div>
-    </div>
-
-    <div class="record">
-        <h2>抽獎記錄</h2>
-        <ul id="reward-record">
-            <!-- Draw results will appear here -->
-        </ul>
     </div>
 
     <script>
@@ -217,8 +176,7 @@
                 cardContainer.appendChild(card);
             }
 
-            // Reset records and drawn count
-            document.getElementById('reward-record').innerHTML = '';
+            // Reset drawn count
             drawnCount = 0;
             updateCountdown();
         }
@@ -243,12 +201,6 @@
             const prizeText = document.createElement('p');
             prizeText.textContent = `${reward}元`;
             card.appendChild(prizeText);
-
-            // Add to record
-            const record = document.getElementById('reward-record');
-            const listItem = document.createElement('li');
-            listItem.textContent = `${reward}元`;
-            record.appendChild(listItem);
 
             // Mark the card as revealed and increment the draw count
             cards[index] = undefined;
