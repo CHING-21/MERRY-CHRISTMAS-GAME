@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHRISTMAS SLOT</title>
+    <title>CHRISTMAS SLOTS</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -93,7 +93,7 @@
 </head>
 <body>
     <div class="slot-machine">
-        <h1>CHRISTMAS SLOT</h1>
+        <h1>CHRISTMAS SLOTS</h1>
         <div class="instructions">
             <p>說明:</p>
             <ul>
@@ -179,17 +179,17 @@
             let prize = 0;
 
             if (symbolCounts['❤️'] === 3) {
-                document.getElementById('result').textContent = '三個愛心！獎金 +520元';
+                document.getElementById('result').textContent = '3個愛心！獎金 +520元';
             } else if (symbolCounts['❤️'] === 2) {
-                document.getElementById('result').textContent = '二個愛心！獎金 -520元';
+                document.getElementById('result').textContent = '2個愛心！獎金 -520元';
             } else if (symbolCounts['🍎'] === 3) {
-                document.getElementById('result').textContent = '三個蘋果！再玩一次抽獎，結果取高者';
+                document.getElementById('result').textContent = '3個蘋果！再玩一次抽獎，結果取高者';
             } else if (symbolCounts['🍎'] === 2) {
-                document.getElementById('result').textContent = '二個蘋果！再玩一次抽獎，結果取最新';
+                document.getElementById('result').textContent = '2個蘋果！再玩一次抽獎，結果取最新';
             } else if (symbolCounts['🍋'] === 3) {
-                document.getElementById('result').textContent = '三個檸檬！再抽二張牌'; 
+                document.getElementById('result').textContent = '3個檸檬！再抽二張牌'; 
             } else if (symbolCounts['🍇'] === 3) {
-                document.getElementById('result').textContent = '三個葡萄！再抽一張牌';
+                document.getElementById('result').textContent = '3個葡萄！再抽一張牌';
             }
 
             updateCountdown();
