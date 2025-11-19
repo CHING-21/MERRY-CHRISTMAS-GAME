@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>抽籤遊戲</title>
+<title>聖誕交換禮物抽籤</title>
 
 <!-- 可愛字體 -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
@@ -12,10 +12,10 @@
 body {
     margin: 0;
     font-family: 'Baloo 2', sans-serif;
-    background: linear-gradient(to bottom, #a0e9ff, #e0f7ff);
+    background: linear-gradient(to bottom, #a6f1a6, #ffe0e0); /* 淡綠到淡紅 */
     min-height: 100vh;
     text-align: center;
-    color: #333;
+    color: #b71c1c;
     overflow-x: hidden;
 }
 
@@ -24,8 +24,8 @@ h1 {
     margin-top: 20px;
     font-size: 36px;
     font-weight: 600;
-    color: #ff5252;
-    text-shadow: 1px 1px 4px white;
+    color: #d32f2f;
+    text-shadow: 1px 1px 4px #fff;
 }
 
 /* 一鍵重抽 */
@@ -33,8 +33,8 @@ h1 {
     margin-top: 10px;
     padding: 12px 26px;
     border: none;
-    background: #ffd54f;
-    color: #5d4037;
+    background: #388e3c; /* 綠色 */
+    color: #fff;
     font-size: 20px;
     border-radius: 12px;
     cursor: pointer;
@@ -42,7 +42,7 @@ h1 {
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 #resetBtn:hover {
-    background: #ffe082;
+    background: #4caf50;
 }
 
 /* 分類標籤 */
@@ -64,63 +64,61 @@ h1 {
 
 /* 卡片樣式 */
 .card {
-    background: #ffffff;
+    background: #fff3e0; /* 淡金色 */
     border-radius: 14px;
     padding: 35px 0;
     cursor: pointer;
     transition: transform 0.25s;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    color: transparent; 
+    color: transparent;
+    perspective: 1000px;
 }
 .card:hover { transform: translateY(-4px); }
-.card.revealed { background: #fff8d6; color: #ff5252; font-weight: bold; }
 
-/* 抽籤球容器 (手搖機) */
-#ballContainer {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 120px;
-    height: 120px;
-    transform: translate(-50%, -50%);
-    border: 4px solid #ff5252;
-    border-radius: 20px;
-    background: #ffe082;
-    z-index: 1000;
+.card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 2s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.card.revealed .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    border-radius: 14px;
     font-weight: bold;
+    font-size: 20px;
     color: #fff;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    pointer-events: none;
-    visibility: hidden;
-}
-.ball {
-    width: 50px;
-    height: 50px;
-    background: radial-gradient(circle at 30% 30%, #ff5252, #d32f2f);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
 }
 
-/* 活潑跳動動畫 */
-@keyframes shake {
-    0% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-15px) rotate(-15deg); }
-    50% { transform: translateY(10px) rotate(10deg); }
-    75% { transform: translateY(-10px) rotate(-10deg); }
-    100% { transform: translateY(0) rotate(0deg); }
+.card-front {
+    background: #d32f2f; /* 紅色 */
+}
+
+.card-back {
+    background: #388e3c; /* 綠色 */
+    transform: rotateY(180deg);
+}
+
+/* 卡片文字顯示用 */
+.card-back span {
+    color: #fff;
 }
 </style>
 </head>
 <body>
 
-<h1>抽籤遊戲 🎁</h1>
+<h1>🎄 聖誕交換禮物 🎁</h1>
 <button id="resetBtn">🔄 一鍵重抽</button>
 
 <div class="label">第 1 & 2 行（形容詞）</div>
@@ -128,9 +126,6 @@ h1 {
 
 <div class="label">第 3 行（顏色）</div>
 <div id="groupB" class="grid"></div>
-
-<!-- 抽籤球容器 -->
-<div id="ballContainer"><div class="ball">🎱</div></div>
 
 <script>
 const adjectives = [
@@ -175,34 +170,39 @@ function createCards(containerId,items){
     items.forEach(item=>{
         let card=document.createElement("div");
         card.className="card";
-        card.textContent="";
+
+        let inner = document.createElement("div");
+        inner.className="card-inner";
+
+        let front = document.createElement("div");
+        front.className="card-front";
+        front.textContent="🎁"; // 卡片前面可愛符號
+
+        let back = document.createElement("div");
+        back.className="card-back";
+        let span = document.createElement("span");
+        span.textContent=item;
+        back.appendChild(span);
+
+        inner.appendChild(front);
+        inner.appendChild(back);
+        card.appendChild(inner);
+
         card.addEventListener("click",()=>{
-            const ballContainer=document.getElementById("ballContainer");
-            ballContainer.style.visibility="visible";
-            ballContainer.querySelector(".ball").textContent="🎱";
-            ballContainer.querySelector(".ball").style.animation="shake 0.5s ease infinite";
-
-            setTimeout(()=>{
-                ballContainer.querySelector(".ball").style.animation="";
-                ballContainer.querySelector(".ball").textContent=item;
+            card.classList.toggle("revealed");
+            // 單格點擊更換
+            if(card.classList.contains("revealed")){
                 setTimeout(()=>{
-                    ballContainer.style.visibility="hidden";
-                },500);
-
-                if(!card.classList.contains("revealed")){
-                    card.classList.add("revealed");
-                    card.textContent=item;
-                } else {
-                    // 單格重抽
                     let source = containerId==="groupA"?adjectives:colors;
                     let newItem;
                     do{
                         newItem=source[Math.floor(Math.random()*source.length)];
-                    }while(newItem===card.textContent);
-                    card.textContent=newItem;
-                }
-            },2000); // 2秒手搖動畫
+                    }while(newItem===span.textContent);
+                    span.textContent=newItem;
+                },2000); // 等旋轉2秒後換
+            }
         });
+
         container.appendChild(card);
     });
 }
