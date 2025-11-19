@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>聖誕交換禮物抽籤</title>
 
-<!-- 可愛字體 -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -17,7 +16,6 @@ body {
     color: #b71c1c; /* 深紅字體 */
 }
 
-/* 標題 */
 h1 {
     margin-top: 20px;
     font-size: 36px;
@@ -25,7 +23,6 @@ h1 {
     color: #b71c1c;
 }
 
-/* 一鍵重抽 */
 #resetBtn {
     margin-top: 10px;
     padding: 10px 24px;
@@ -42,7 +39,6 @@ h1 {
     background: #4caf50;
 }
 
-/* 卡片區塊 */
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -52,7 +48,6 @@ h1 {
     margin: 20px auto;
 }
 
-/* 每列編號 */
 .row-numbers {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -64,9 +59,8 @@ h1 {
     color: #b71c1c;
 }
 
-/* 卡片樣式 */
 .card {
-    background: #ffe0e0; /* 淡紅色卡片 */
+    background: #ffe0e0;
     border-radius: 12px;
     width: 100%;
     padding: 30px 0;
@@ -90,19 +84,19 @@ h1 {
 <h1>🎄 聖誕交換禮物 🎁</h1>
 <button id="resetBtn">🔄 一鍵重抽</button>
 
-<!-- 第 1 行 -->
+<!-- 第一行 -->
 <div class="row-numbers">
     <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
 </div>
 <div id="groupA1" class="grid"></div>
 
-<!-- 第 2 行 -->
+<!-- 第二行 -->
 <div class="row-numbers">
     <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
 </div>
 <div id="groupA2" class="grid"></div>
 
-<!-- 第 3 行 -->
+<!-- 第三行 -->
 <div id="groupB" class="grid"></div>
 
 <script>
@@ -140,41 +134,32 @@ function fillCards(){
     document.getElementById("groupA2").innerHTML="";
     document.getElementById("groupB").innerHTML="";
 
-    // 取 14 個形容詞
-    let pickA=shuffle(adjectives.slice()).slice(0,14);
-    let pickA1=pickA.slice(0,7);
-    let pickA2=pickA.slice(7,14);
+    // 第 1、2 行 14 張卡片，初始空白
+    createCards("groupA1",7,true);
+    createCards("groupA2",7,true);
 
-    // 第 3 行顏色，抽選前空白
-    let pickB=new Array(7).fill("");
-
-    createCards("groupA1",pickA1,true); // 初始空白
-    createCards("groupA2",pickA2,true); // 初始空白
-    createCards("groupB",pickB,true);
+    // 第 3 行 7 張卡片，初始空白
+    createCards("groupB",7,true);
 }
 
-function createCards(containerId,items,empty=false){
+function createCards(containerId,count,empty=true){
     let container=document.getElementById(containerId);
-    items.forEach(item=>{
+    for(let i=0;i<count;i++){
         let card=document.createElement("div");
         card.className="card";
-        card.textContent = empty ? "" : item;
-
+        card.textContent=empty?"":getRandomItem(containerId);
         card.addEventListener("click",()=>{
-            // 點擊時隨機換新
-            let source = (containerId==="groupB")?colors:adjectives;
-            let newItem;
-            do{
-                newItem=source[Math.floor(Math.random()*source.length)];
-            }while(newItem===card.textContent);
-            card.textContent=newItem;
+            card.textContent=getRandomItem(containerId);
         });
-
         container.appendChild(card);
-    });
+    }
 }
 
-// 一鍵重抽
+function getRandomItem(containerId){
+    let source = (containerId==="groupB")?colors:adjectives;
+    return source[Math.floor(Math.random()*source.length)];
+}
+
 document.getElementById("resetBtn").addEventListener("click",fillCards);
 
 fillCards();
