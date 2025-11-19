@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聖誕交換禮物 - 抽籤遊戲</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #f1f1f1;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 32px;
+            color: #c62828;
+            text-shadow: 1px 1px 2px #fff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 22px;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card.revealed {
+            background: #ffe082;
+            font-weight: bold;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>聖誕交換禮物</h1>
+
+    <div class="label">第 1 & 2 行（組 A）</div>
+    <div id="groupA" class="grid"></div>
+
+    <div class="label">第 3 行（組 B）</div>
+    <div id="groupB" class="grid"></div>
+
+    <script>
+        // 之後你給我內容，我會幫你填入
+        let groupA_items = Array(14).fill("A組內容");
+        let groupB_items = Array(7).fill("B組內容");
+
+        // 洗牌功能
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function createCards(containerId, items) {
+            let container = document.getElementById(containerId);
+            container.innerHTML = "";
+
+            let shuffled = shuffle(items.slice());
+
+            shuffled.forEach((item) => {
+                let card = document.createElement("div");
+                card.className = "card";
+                card.textContent = "點我抽籤";
+
+                card.addEventListener("click", function () {
+                    if (!card.classList.contains("revealed")) {
+                        card.classList.add("revealed");
+                        card.textContent = item;
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // 產生兩組卡片
+        createCards("groupA", groupA_items);
+        createCards("groupB", groupB_items);
+    </script>
+</body>
+</html>
