@@ -68,13 +68,17 @@ h1 {
 .card {
     background: #ffe0e0; /* 淡紅色卡片 */
     border-radius: 12px;
-    padding: 20px 0;
+    width: 100%;
+    padding: 30px 0;
     font-weight: bold;
     font-size: 16px;
     cursor: pointer;
     color: #b71c1c;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .card:hover {
     background: #ffcccc;
@@ -86,11 +90,17 @@ h1 {
 <h1>🎄 聖誕交換禮物 🎁</h1>
 <button id="resetBtn">🔄 一鍵重抽</button>
 
-<!-- 第 1 & 2 行 -->
+<!-- 第 1 行 -->
 <div class="row-numbers">
     <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
 </div>
-<div id="groupA" class="grid"></div>
+<div id="groupA1" class="grid"></div>
+
+<!-- 第 2 行 -->
+<div class="row-numbers">
+    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+</div>
+<div id="groupA2" class="grid"></div>
 
 <!-- 第 3 行 -->
 <div id="groupB" class="grid"></div>
@@ -125,12 +135,22 @@ function shuffle(arr){
 }
 
 function fillCards(){
-    document.getElementById("groupA").innerHTML="";
+    // 清空所有格子
+    document.getElementById("groupA1").innerHTML="";
+    document.getElementById("groupA2").innerHTML="";
     document.getElementById("groupB").innerHTML="";
+
+    // 取 14 個形容詞
     let pickA=shuffle(adjectives.slice()).slice(0,14);
-    let pickB=shuffle(colors.slice()).slice(0,7);
-    createCards("groupA",pickA);
-    createCards("groupB",pickB,true); // 第三行初始空白
+    let pickA1=pickA.slice(0,7);
+    let pickA2=pickA.slice(7,14);
+
+    // 第 3 行顏色，抽選前空白
+    let pickB=new Array(7).fill("");
+
+    createCards("groupA1",pickA1,true); // 初始空白
+    createCards("groupA2",pickA2,true); // 初始空白
+    createCards("groupB",pickB,true);
 }
 
 function createCards(containerId,items,empty=false){
@@ -141,7 +161,8 @@ function createCards(containerId,items,empty=false){
         card.textContent = empty ? "" : item;
 
         card.addEventListener("click",()=>{
-            let source = containerId==="groupA"?adjectives:colors;
+            // 點擊時隨機換新
+            let source = (containerId==="groupB")?colors:adjectives;
             let newItem;
             do{
                 newItem=source[Math.floor(Math.random()*source.length)];
