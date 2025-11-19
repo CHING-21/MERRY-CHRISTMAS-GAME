@@ -12,11 +12,9 @@
 body {
     margin: 0;
     font-family: 'Baloo 2', sans-serif;
-    background: linear-gradient(to bottom, #a6f1a6, #ffe0e0); /* 淡綠到淡紅 */
-    min-height: 100vh;
+    background: #ffffff; /* 白色背景 */
     text-align: center;
-    color: #b71c1c;
-    overflow-x: hidden;
+    color: #b71c1c; /* 深紅字體 */
 }
 
 /* 標題 */
@@ -24,16 +22,15 @@ h1 {
     margin-top: 20px;
     font-size: 36px;
     font-weight: 600;
-    color: #d32f2f;
-    text-shadow: 1px 1px 4px #fff;
+    color: #b71c1c;
 }
 
 /* 一鍵重抽 */
 #resetBtn {
     margin-top: 10px;
-    padding: 12px 26px;
+    padding: 10px 24px;
     border: none;
-    background: #388e3c; /* 綠色 */
+    background: #388e3c;
     color: #fff;
     font-size: 20px;
     border-radius: 12px;
@@ -56,63 +53,38 @@ h1 {
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
+    gap: 10px;
     width: 92%;
     max-width: 900px;
     margin: 20px auto;
 }
 
+/* 每列編號 */
+.row-numbers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    width: 92%;
+    max-width: 900px;
+    margin: 0 auto 5px auto;
+    font-weight: bold;
+    color: #b71c1c;
+}
+
 /* 卡片樣式 */
 .card {
-    background: #fff3e0; /* 淡金色 */
-    border-radius: 14px;
-    padding: 35px 0;
-    cursor: pointer;
-    transition: transform 0.25s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    color: transparent;
-    perspective: 1000px;
-}
-.card:hover { transform: translateY(-4px); }
-
-.card-inner {
-    width: 100%;
-    height: 100%;
-    transition: transform 2s;
-    transform-style: preserve-3d;
-    position: relative;
-}
-
-.card.revealed .card-inner {
-    transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 14px;
+    background: #ffe0e0; /* 淡紅色卡片 */
+    border-radius: 12px;
+    padding: 20px 0;
     font-weight: bold;
-    font-size: 20px;
-    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    color: #b71c1c;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background 0.2s;
 }
-
-.card-front {
-    background: #d32f2f; /* 紅色 */
-}
-
-.card-back {
-    background: #388e3c; /* 綠色 */
-    transform: rotateY(180deg);
-}
-
-/* 卡片文字顯示用 */
-.card-back span {
-    color: #fff;
+.card:hover {
+    background: #ffcccc;
 }
 </style>
 </head>
@@ -122,9 +94,15 @@ h1 {
 <button id="resetBtn">🔄 一鍵重抽</button>
 
 <div class="label">第 1 & 2 行（形容詞）</div>
+<div class="row-numbers">
+    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+</div>
 <div id="groupA" class="grid"></div>
 
 <div class="label">第 3 行（顏色）</div>
+<div class="row-numbers">
+    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+</div>
 <div id="groupB" class="grid"></div>
 
 <script>
@@ -170,37 +148,16 @@ function createCards(containerId,items){
     items.forEach(item=>{
         let card=document.createElement("div");
         card.className="card";
-
-        let inner = document.createElement("div");
-        inner.className="card-inner";
-
-        let front = document.createElement("div");
-        front.className="card-front";
-        front.textContent="🎁"; // 卡片前面可愛符號
-
-        let back = document.createElement("div");
-        back.className="card-back";
-        let span = document.createElement("span");
-        span.textContent=item;
-        back.appendChild(span);
-
-        inner.appendChild(front);
-        inner.appendChild(back);
-        card.appendChild(inner);
+        card.textContent=item;
 
         card.addEventListener("click",()=>{
-            card.classList.toggle("revealed");
             // 單格點擊更換
-            if(card.classList.contains("revealed")){
-                setTimeout(()=>{
-                    let source = containerId==="groupA"?adjectives:colors;
-                    let newItem;
-                    do{
-                        newItem=source[Math.floor(Math.random()*source.length)];
-                    }while(newItem===span.textContent);
-                    span.textContent=newItem;
-                },2000); // 等旋轉2秒後換
-            }
+            let source = containerId==="groupA"?adjectives:colors;
+            let newItem;
+            do{
+                newItem=source[Math.floor(Math.random()*source.length)];
+            }while(newItem===card.textContent);
+            card.textContent=newItem;
         });
 
         container.appendChild(card);
