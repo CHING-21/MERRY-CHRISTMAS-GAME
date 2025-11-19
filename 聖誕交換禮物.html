@@ -1,1 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聖誕交換禮物抽籤</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Baloo 2', sans-serif;
+    background: #ffffff; /* 白色背景 */
+    text-align: center;
+    color: #b71c1c; /* 深紅字體 */
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 36px;
+    font-weight: 600;
+    color: #b71c1c;
+}
+
+#resetBtn {
+    margin-top: 10px;
+    padding: 10px 24px;
+    border: none;
+    background: #388e3c;
+    color: #fff;
+    font-size: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+#resetBtn:hover {
+    background: #4caf50;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    width: 92%;
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.row-numbers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    width: 92%;
+    max-width: 900px;
+    margin: 0 auto 5px auto;
+    font-weight: bold;
+    color: #b71c1c;
+}
+
+.card {
+    background: #ffe0e0;
+    border-radius: 12px;
+    width: 100%;
+    padding: 30px 0;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    color: #b71c1c;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card:hover {
+    background: #ffcccc;
+}
+</style>
+</head>
+<body>
+
+<h1>🎄 聖誕交換禮物 🎁</h1>
+<button id="resetBtn">🔄 一鍵重抽</button>
+
+<!-- 第一行 -->
+<div class="row-numbers">
+    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+</div>
+<div id="groupA1" class="grid"></div>
+
+<!-- 第二行 -->
+<div id="groupA2" class="grid"></div>
+
+<!-- 第三行 -->
+<div id="groupB" class="grid"></div>
+
+<script>
+const adjectives = [
+"高級感的","暗黑的","香香的","龐大的","令人困惑的","閃亮的","Q彈的",
+"會發光的","冬天感的","無用的","有趣的","浪漫的","蓬鬆的","復古的",
+"荒唐卻實用的","溫暖的","聖誕風的","奢華但沒必要的","冰冷的","暖暖的",
+"超迷你的","上班用的到的","過度豪華的","圓滾滾的","輕盈的","柔軟的",
+"超乎預期普通的","科幻的","療癒的","神秘的","讓人尷尬的","男生會喜歡的",
+"文青的","毫無必要但很好笑的","奇怪的","金屬感的","乍看很貴其實很便宜的",
+"女生會喜歡的","魔法的","未來感的","毛茸茸的","會動的（有機關、有電池）"
+];
+
+const colors = [
+"海苔綠","酒紅","亮紅","蒼蠅綠","奶茶色","咖啡色","深紅",
+"西瓜綠","月光銀","台啤綠","芥末黃","波霸黑","夜晚藍",
+"橘子汽水橘","香草白","玫瑰粉","柴犬米色","泥巴色",
+"乖乖綠","霓虹紫","歐告黑","霧藍","冬瓜茶褐色",
+"小時候課桌椅綠","薄荷綠","鯊魚灰","獨角獸色","太空黑",
+"椰奶白","彩虹色","深藍","IKEA藍","美乃滋白",
+"天空藍","淺粉","葡萄紫"
+];
+
+function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function fillCards(){
+    // 清空所有格子
+    document.getElementById("groupA1").innerHTML="";
+    document.getElementById("groupA2").innerHTML="";
+    document.getElementById("groupB").innerHTML="";
+
+    // 第 1、2 行 14 張卡片，初始空白
+    createCards("groupA1",7,true);
+    createCards("groupA2",7,true);
+
+    // 第 3 行 7 張卡片，初始空白
+    createCards("groupB",7,true);
+}
+
+function createCards(containerId,count,empty=true){
+    let container=document.getElementById(containerId);
+    for(let i=0;i<count;i++){
+        let card=document.createElement("div");
+        card.className="card";
+        card.textContent=empty?"":getRandomItem(containerId);
+        card.addEventListener("click",()=>{
+            card.textContent=getRandomItem(containerId);
+        });
+        container.appendChild(card);
+    }
+}
+
+function getRandomItem(containerId){
+    let source = (containerId==="groupB")?colors:adjectives;
+    return source[Math.floor(Math.random()*source.length)];
+}
+
+document.getElementById("resetBtn").addEventListener("click",fillCards);
+
+fillCards();
+</script>
+
+</body>
+</html>
