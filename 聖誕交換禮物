@@ -42,13 +42,6 @@ h1 {
     background: #4caf50;
 }
 
-/* 分類標籤 */
-.label {
-    margin-top: 15px;
-    font-size: 22px;
-    font-weight: bold;
-}
-
 /* 卡片區塊 */
 .grid {
     display: grid;
@@ -93,16 +86,13 @@ h1 {
 <h1>🎄 聖誕交換禮物 🎁</h1>
 <button id="resetBtn">🔄 一鍵重抽</button>
 
-<div class="label">第 1 & 2 行（形容詞）</div>
+<!-- 第 1 & 2 行 -->
 <div class="row-numbers">
     <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
 </div>
 <div id="groupA" class="grid"></div>
 
-<div class="label">第 3 行（顏色）</div>
-<div class="row-numbers">
-    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
-</div>
+<!-- 第 3 行 -->
 <div id="groupB" class="grid"></div>
 
 <script>
@@ -140,18 +130,17 @@ function fillCards(){
     let pickA=shuffle(adjectives.slice()).slice(0,14);
     let pickB=shuffle(colors.slice()).slice(0,7);
     createCards("groupA",pickA);
-    createCards("groupB",pickB);
+    createCards("groupB",pickB,true); // 第三行初始空白
 }
 
-function createCards(containerId,items){
+function createCards(containerId,items,empty=false){
     let container=document.getElementById(containerId);
     items.forEach(item=>{
         let card=document.createElement("div");
         card.className="card";
-        card.textContent=item;
+        card.textContent = empty ? "" : item;
 
         card.addEventListener("click",()=>{
-            // 單格點擊更換
             let source = containerId==="groupA"?adjectives:colors;
             let newItem;
             do{
