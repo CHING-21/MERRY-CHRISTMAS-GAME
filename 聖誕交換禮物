@@ -12,12 +12,10 @@
 body {
     margin: 0;
     font-family: 'Baloo 2', sans-serif;
-    background: url('https://images.unsplash.com/photo-1607359939180-c89c8a4c303c?auto=format&fit=crop&w=1950&q=80') no-repeat center top;
-    background-size: cover;
+    background: linear-gradient(to bottom, #a0e9ff, #e0f7ff);
     min-height: 100vh;
     text-align: center;
     color: #333;
-    position: relative;
     overflow-x: hidden;
 }
 
@@ -26,8 +24,8 @@ h1 {
     margin-top: 20px;
     font-size: 36px;
     font-weight: 600;
-    color: #d32f2f;
-    text-shadow: 0 0 8px white;
+    color: #ff5252;
+    text-shadow: 1px 1px 4px white;
 }
 
 /* 一鍵重抽 */
@@ -35,7 +33,7 @@ h1 {
     margin-top: 10px;
     padding: 12px 26px;
     border: none;
-    background: #ffca28;
+    background: #ffd54f;
     color: #5d4037;
     font-size: 20px;
     border-radius: 12px;
@@ -66,42 +64,57 @@ h1 {
 
 /* 卡片樣式 */
 .card {
-    background: white;
+    background: #ffffff;
     border-radius: 14px;
     padding: 35px 0;
     cursor: pointer;
     transition: transform 0.25s;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    color: transparent; /* 預設無字 */
+    color: transparent; 
 }
 .card:hover { transform: translateY(-4px); }
-.card.revealed { background: #fff8d6; color: #d32f2f; font-weight: bold; }
+.card.revealed { background: #fff8d6; color: #ff5252; font-weight: bold; }
 
-/* 抽籤球動畫 */
-#ballAnimation {
+/* 抽籤球容器 (手搖機) */
+#ballContainer {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 60px;
-    height: 60px;
+    width: 120px;
+    height: 120px;
+    transform: translate(-50%, -50%);
+    border: 4px solid #ff5252;
+    border-radius: 20px;
+    background: #ffe082;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    pointer-events: none;
+    visibility: hidden;
+}
+.ball {
+    width: 50px;
+    height: 50px;
     background: radial-gradient(circle at 30% 30%, #ff5252, #d32f2f);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 28px;
-    font-weight: bold;
-    box-shadow: 0 0 15px rgba(0,0,0,0.4);
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0;
-    transition: transform 2s ease, opacity 2s ease;
 }
-#ballAnimation.show {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 1;
+
+/* 活潑跳動動畫 */
+@keyframes shake {
+    0% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-15px) rotate(-15deg); }
+    50% { transform: translateY(10px) rotate(10deg); }
+    75% { transform: translateY(-10px) rotate(-10deg); }
+    100% { transform: translateY(0) rotate(0deg); }
 }
 </style>
 </head>
@@ -116,8 +129,8 @@ h1 {
 <div class="label">第 3 行（顏色）</div>
 <div id="groupB" class="grid"></div>
 
-<!-- 抽籤球動畫 -->
-<div id="ballAnimation">🎱</div>
+<!-- 抽籤球容器 -->
+<div id="ballContainer"><div class="ball">🎱</div></div>
 
 <script>
 const adjectives = [
@@ -164,15 +177,22 @@ function createCards(containerId,items){
         card.className="card";
         card.textContent="";
         card.addEventListener("click",()=>{
-            // 顯示動畫
-            const ball=document.getElementById("ballAnimation");
-            ball.classList.add("show");
+            const ballContainer=document.getElementById("ballContainer");
+            ballContainer.style.visibility="visible";
+            ballContainer.querySelector(".ball").textContent="🎱";
+            ballContainer.querySelector(".ball").style.animation="shake 0.5s ease infinite";
+
             setTimeout(()=>{
-                ball.classList.remove("show");
+                ballContainer.querySelector(".ball").style.animation="";
+                ballContainer.querySelector(".ball").textContent=item;
+                setTimeout(()=>{
+                    ballContainer.style.visibility="hidden";
+                },500);
+
                 if(!card.classList.contains("revealed")){
                     card.classList.add("revealed");
                     card.textContent=item;
-                }else{
+                } else {
                     // 單格重抽
                     let source = containerId==="groupA"?adjectives:colors;
                     let newItem;
@@ -181,7 +201,7 @@ function createCards(containerId,items){
                     }while(newItem===card.textContent);
                     card.textContent=newItem;
                 }
-            },2000); // 2秒
+            },2000); // 2秒手搖動畫
         });
         container.appendChild(card);
     });
