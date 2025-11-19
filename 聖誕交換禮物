@@ -1,130 +1,177 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聖誕交換禮物 - 抽籤遊戲</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抽籤遊戲</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: "Segoe UI", sans-serif;
-            background: #f1f1f1;
-            text-align: center;
-        }
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f7f7f7;
+    min-height: 100vh;
+    text-align: center;
+    overflow-x: hidden;
+    color: #333;
+}
 
-        h1 {
-            margin-top: 30px;
-            font-size: 32px;
-            color: #c62828;
-            text-shadow: 1px 1px 2px #fff;
-        }
+/* 標題 */
+h1 {
+    margin-top: 20px;
+    font-size: 32px;
+    font-weight: bold;
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            width: 90%;
-            max-width: 900px;
-            margin: 20px auto;
-        }
+/* 重抽按鈕 */
+#resetBtn {
+    margin-top: 10px;
+    padding: 10px 22px;
+    border: none;
+    background: #1976d2;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+#resetBtn:hover { background: #1565c0; }
 
-        .card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 25px 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-size: 20px;
-            cursor: pointer;
-            user-select: none;
-            transition: 0.25s;
-        }
+/* 分類標籤 */
+.label {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
-        .card:hover {
-            transform: scale(1.05);
-        }
+/* 卡片網格 */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    width: 90%;
+    max-width: 900px;
+    margin: 15px auto;
+}
 
-        .card.revealed {
-            background: #ffe082;
-            font-weight: bold;
-        }
+/* 卡片樣式 */
+.card {
+    background: white;
+    color: #333;
+    border-radius: 10px;
+    padding: 25px 0;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.25s, background 0.25s;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
 
-        .label {
-            margin-top: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-    </style>
+.card:hover { transform: scale(1.06); }
+
+/* 抽出時彈跳特效 */
+@keyframes pop {
+    0% { transform: scale(0.5); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.card.revealed {
+    background: #fff8d6;
+    animation: pop 0.35s ease-out;
+}
+</style>
 </head>
 
 <body>
-    <h1>聖誕交換禮物</h1>
+<h1>抽籤遊戲</h1>
+<button id="resetBtn">一鍵重抽</button>
 
-    <div class="label">第 1 & 2 行（形容詞組）</div>
-    <div id="groupA" class="grid"></div>
+<div class="label">第 1 & 2 行（形容詞）</div>
+<div id="groupA" class="grid"></div>
 
-    <div class="label">第 3 行（顏色組）</div>
-    <div id="groupB" class="grid"></div>
+<div class="label">第 3 行（顏色）</div>
+<div id="groupB" class="grid"></div>
 
-    <script>
-        // ===== 前兩行題庫 42 個 =====
-        const adjectives = [
-            "高級感的","暗黑的","香香的","龐大的","令人困惑的","閃亮的","Q彈的",
-            "會發光的","冬天感的","無用的","有趣的","浪漫的","蓬鬆的","復古的",
-            "荒唐卻實用的","溫暖的","聖誕風的","奢華但沒必要的","冰冷的","暖暖的",
-            "超迷你的","上班用的到的","過度豪華的","圓滾滾的","輕盈的","柔軟的",
-            "超乎預期普通的","科幻的","療癒的","神秘的","讓人尷尬的","男生會喜歡的",
-            "文青的","毫無必要但很好笑的","奇怪的","金屬感的","乍看很貴其實很便宜的",
-            "女生會喜歡的","魔法的","未來感的","毛茸茸的","會動的（有機關、有電池）"
-        ];
+<script>
+/* ===================== 題庫 ===================== */
+const adjectives = [
+"高級感的","暗黑的","香香的","龐大的","令人困惑的","閃亮的","Q彈的",
+"會發光的","冬天感的","無用的","有趣的","浪漫的","蓬鬆的","復古的",
+"荒唐卻實用的","溫暖的","聖誕風的","奢華但沒必要的","冰冷的","暖暖的",
+"超迷你的","上班用的到的","過度豪華的","圓滾滾的","輕盈的","柔軟的",
+"超乎預期普通的","科幻的","療癒的","神秘的","讓人尷尬的","男生會喜歡的",
+"文青的","毫無必要但很好笑的","奇怪的","金屬感的","乍看很貴其實很便宜的",
+"女生會喜歡的","魔法的","未來感的","毛茸茸的","會動的（有機關、有電池）"
+];
 
-        // ===== 第三行題庫（36 個顏色）=====
-        const colors = [
-            "海苔綠","酒紅","亮紅","蒼蠅綠","奶茶色","咖啡色","深紅",
-            "西瓜綠","月光銀","台啤綠","芥末黃","波霸黑","夜晚藍",
-            "橘子汽水橘","香草白","玫瑰粉","柴犬米色","泥巴色",
-            "乖乖綠","霓虹紫","歐告黑","霧藍","冬瓜茶褐色",
-            "小時候課桌椅綠","薄荷綠","鯊魚灰","獨角獸色","太空黑",
-            "椰奶白","彩虹色","深藍","IKEA藍","美乃滋白",
-            "天空藍","淺粉","葡萄紫"
-        ];
+const colors = [
+"海苔綠","酒紅","亮紅","蒼蠅綠","奶茶色","咖啡色","深紅",
+"西瓜綠","月光銀","台啤綠","芥末黃","波霸黑","夜晚藍",
+"橘子汽水橘","香草白","玫瑰粉","柴犬米色","泥巴色",
+"乖乖綠","霓虹紫","歐告黑","霧藍","冬瓜茶褐色",
+"小時候課桌椅綠","薄荷綠","鯊魚灰","獨角獸色","太空黑",
+"椰奶白","彩虹色","深藍","IKEA藍","美乃滋白",
+"天空藍","淺粉","葡萄紫"
+];
 
-        // 洗牌 function
-        function shuffle(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+/* 洗牌 */
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+/* 產生整組卡片 */
+function fillCards() {
+    document.getElementById("groupA").innerHTML = "";
+    document.getElementById("groupB").innerHTML = "";
+
+    let pickA = shuffle(adjectives.slice()).slice(0, 14);
+    let pickB = shuffle(colors.slice()).slice(0, 7);
+
+    createCards("groupA", pickA);
+    createCards("groupB", pickB);
+}
+
+/* 建立每張卡片 */
+function createCards(containerId, items) {
+    let container = document.getElementById(containerId);
+
+    items.forEach(item => {
+        let card = document.createElement("div");
+        card.className = "card";
+        card.textContent = "點我抽籤";
+
+        card.addEventListener("click", () => {
+            if (!card.classList.contains("revealed")) {
+                card.classList.add("revealed");
+                card.textContent = item;
+            } else {
+                // 單格重抽
+                let source = containerId === "groupA" ? adjectives : colors;
+                let newItem;
+                do {
+                    newItem = source[Math.floor(Math.random() * source.length)];
+                } while (newItem === card.textContent);
+
+                card.textContent = newItem;
             }
-            return arr;
-        }
+        });
 
-        // 抽卡 function
-        function createCards(containerId, items) {
-            let container = document.getElementById(containerId);
-            container.innerHTML = "";
+        container.appendChild(card);
+    });
+}
 
-            let shuffled = shuffle(items.slice());
+/* 一鍵重抽 */
+document.getElementById("resetBtn").addEventListener("click", fillCards);
 
-            shuffled.forEach(item => {
-                let card = document.createElement("div");
-                card.className = "card";
-                card.textContent = "點我抽籤";
+/* 初始化 */
+fillCards();
+</script>
 
-                card.addEventListener("click", () => {
-                    if (!card.classList.contains("revealed")) {
-                        card.classList.add("revealed");
-                        card.textContent = item;
-                    }
-                });
-
-                container.appendChild(card);
-            });
-        }
-
-        // ===== 產生兩組卡片 =====
-        createCards("groupA", shuffle(adjectives).slice(0, 14));  // 前兩行 14 個
-        createCards("groupB", shuffle(colors).slice(0, 7));       // 第三行 7 個
-    </script>
 </body>
 </html>
