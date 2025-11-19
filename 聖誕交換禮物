@@ -32,9 +32,9 @@
         .card {
             background: #fff;
             border-radius: 10px;
-            padding: 20px 0;
+            padding: 25px 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-size: 22px;
+            font-size: 20px;
             cursor: pointer;
             user-select: none;
             transition: 0.25s;
@@ -61,18 +61,36 @@
 <body>
     <h1>聖誕交換禮物</h1>
 
-    <div class="label">第 1 & 2 行（組 A）</div>
+    <div class="label">第 1 & 2 行（形容詞組）</div>
     <div id="groupA" class="grid"></div>
 
-    <div class="label">第 3 行（組 B）</div>
+    <div class="label">第 3 行（顏色組）</div>
     <div id="groupB" class="grid"></div>
 
     <script>
-        // 之後你給我內容，我會幫你填入
-        let groupA_items = Array(14).fill("A組內容");
-        let groupB_items = Array(7).fill("B組內容");
+        // ===== 前兩行題庫 42 個 =====
+        const adjectives = [
+            "高級感的","暗黑的","香香的","龐大的","令人困惑的","閃亮的","Q彈的",
+            "會發光的","冬天感的","無用的","有趣的","浪漫的","蓬鬆的","復古的",
+            "荒唐卻實用的","溫暖的","聖誕風的","奢華但沒必要的","冰冷的","暖暖的",
+            "超迷你的","上班用的到的","過度豪華的","圓滾滾的","輕盈的","柔軟的",
+            "超乎預期普通的","科幻的","療癒的","神秘的","讓人尷尬的","男生會喜歡的",
+            "文青的","毫無必要但很好笑的","奇怪的","金屬感的","乍看很貴其實很便宜的",
+            "女生會喜歡的","魔法的","未來感的","毛茸茸的","會動的（有機關、有電池）"
+        ];
 
-        // 洗牌功能
+        // ===== 第三行題庫（36 個顏色）=====
+        const colors = [
+            "海苔綠","酒紅","亮紅","蒼蠅綠","奶茶色","咖啡色","深紅",
+            "西瓜綠","月光銀","台啤綠","芥末黃","波霸黑","夜晚藍",
+            "橘子汽水橘","香草白","玫瑰粉","柴犬米色","泥巴色",
+            "乖乖綠","霓虹紫","歐告黑","霧藍","冬瓜茶褐色",
+            "小時候課桌椅綠","薄荷綠","鯊魚灰","獨角獸色","太空黑",
+            "椰奶白","彩虹色","深藍","IKEA藍","美乃滋白",
+            "天空藍","淺粉","葡萄紫"
+        ];
+
+        // 洗牌 function
         function shuffle(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -81,18 +99,19 @@
             return arr;
         }
 
+        // 抽卡 function
         function createCards(containerId, items) {
             let container = document.getElementById(containerId);
             container.innerHTML = "";
 
             let shuffled = shuffle(items.slice());
 
-            shuffled.forEach((item) => {
+            shuffled.forEach(item => {
                 let card = document.createElement("div");
                 card.className = "card";
                 card.textContent = "點我抽籤";
 
-                card.addEventListener("click", function () {
+                card.addEventListener("click", () => {
                     if (!card.classList.contains("revealed")) {
                         card.classList.add("revealed");
                         card.textContent = item;
@@ -103,9 +122,9 @@
             });
         }
 
-        // 產生兩組卡片
-        createCards("groupA", groupA_items);
-        createCards("groupB", groupB_items);
+        // ===== 產生兩組卡片 =====
+        createCards("groupA", shuffle(adjectives).slice(0, 14));  // 前兩行 14 個
+        createCards("groupB", shuffle(colors).slice(0, 7));       // 第三行 7 個
     </script>
 </body>
 </html>
