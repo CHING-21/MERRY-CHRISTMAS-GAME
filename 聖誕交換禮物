@@ -3,48 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>抽籤遊戲</title>
+<title>聖誕交換禮物 - 抽籤遊戲</title>
 
 <style>
+/* ====== 基本設定 ====== */
 body {
     margin: 0;
     font-family: "Segoe UI", sans-serif;
-    background: #f7f7f7;
+    background: linear-gradient(#cc2b5e, #753a88);
     min-height: 100vh;
     text-align: center;
     overflow-x: hidden;
-    color: #333;
+    position: relative;
+    color: white;
 }
 
-/* 標題 */
+/* ====== 雪花特效 ====== */
+@keyframes snow {
+    0% {transform: translateY(-10vh) translateX(0);}
+    100% {transform: translateY(110vh) translateX(20px);}
+}
+.snowflake {
+    position: fixed;
+    top: -10vh;
+    color: white;
+    font-size: 1.2em;
+    opacity: 0.8;
+    animation: snow linear infinite;
+    pointer-events: none;
+}
+
+/* ====== 標題 ====== */
 h1 {
     margin-top: 20px;
-    font-size: 32px;
-    font-weight: bold;
+    font-size: 40px;
+    text-shadow: 0 0 10px #fff, 0 0 20px gold;
 }
 
-/* 重抽按鈕 */
+/* ====== 重抽按鈕 ====== */
 #resetBtn {
     margin-top: 10px;
-    padding: 10px 22px;
+    padding: 12px 25px;
     border: none;
-    background: #1976d2;
-    color: #fff;
-    font-size: 18px;
+    background: #ffeb3b;
+    color: #b71c1c;
+    font-size: 20px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-#resetBtn:hover { background: #1565c0; }
+#resetBtn:hover {
+    background: #fff176;
+}
 
-/* 分類標籤 */
+/* ====== 分類標籤 ====== */
 .label {
     margin-top: 15px;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+    text-shadow: 0 0 5px rgba(255,255,255,0.6);
 }
 
-/* 卡片網格 */
+/* ====== 卡片網格 ====== */
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -54,44 +75,48 @@ h1 {
     margin: 15px auto;
 }
 
-/* 卡片樣式 */
+/* ====== 卡片樣式 ====== */
 .card {
     background: white;
     color: #333;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 25px 0;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.25s, background 0.25s;
+    transition: transform 0.3s, background 0.3s, color 0.3s;
     font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    position: relative;
 }
 
-.card:hover { transform: scale(1.06); }
-
-/* 抽出時彈跳特效 */
+/* 抽籤球特效 */
 @keyframes pop {
-    0% { transform: scale(0.5); }
-    70% { transform: scale(1.15); }
-    100% { transform: scale(1); }
+    0% {transform: scale(0.5);}
+    70% {transform: scale(1.2);}
+    100% {transform: scale(1);}
 }
 
 .card.revealed {
-    background: #fff8d6;
-    animation: pop 0.35s ease-out;
+    background: #ffebcd;
+    color: #b71c1c;
+    animation: pop 0.4s ease-out;
 }
+
+/* 卡片 hover */
+.card:hover { transform: scale(1.08); }
+
 </style>
 </head>
 
 <body>
-<h1>抽籤遊戲</h1>
-<button id="resetBtn">一鍵重抽</button>
+<h1>🎁 聖誕交換禮物抽籤 🎄</h1>
+<button id="resetBtn">🔄 一鍵重抽</button>
 
-<div class="label">第 1 & 2 行（形容詞）</div>
+<div class="label">第 1 & 2 行（形容詞組）</div>
 <div id="groupA" class="grid"></div>
 
-<div class="label">第 3 行（顏色）</div>
+<div class="label">第 3 行（顏色組）</div>
 <div id="groupB" class="grid"></div>
 
 <script>
@@ -116,7 +141,7 @@ const colors = [
 "天空藍","淺粉","葡萄紫"
 ];
 
-/* 洗牌 */
+/* ===================== 工具：洗牌 ===================== */
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -125,7 +150,7 @@ function shuffle(arr) {
     return arr;
 }
 
-/* 產生整組卡片 */
+/* ===================== 產生卡片 function ===================== */
 function fillCards() {
     document.getElementById("groupA").innerHTML = "";
     document.getElementById("groupB").innerHTML = "";
@@ -137,7 +162,6 @@ function fillCards() {
     createCards("groupB", pickB);
 }
 
-/* 建立每張卡片 */
 function createCards(containerId, items) {
     let container = document.getElementById(containerId);
 
@@ -146,12 +170,13 @@ function createCards(containerId, items) {
         card.className = "card";
         card.textContent = "點我抽籤";
 
+        // 點擊翻牌 / 再點擊重新抽這一格
         card.addEventListener("click", () => {
             if (!card.classList.contains("revealed")) {
                 card.classList.add("revealed");
                 card.textContent = item;
             } else {
-                // 單格重抽
+                // 換另一個不重複的隨機題目
                 let source = containerId === "groupA" ? adjectives : colors;
                 let newItem;
                 do {
@@ -166,10 +191,24 @@ function createCards(containerId, items) {
     });
 }
 
-/* 一鍵重抽 */
+/* ===================== 一鍵重抽 ===================== */
 document.getElementById("resetBtn").addEventListener("click", fillCards);
 
-/* 初始化 */
+/* ===================== 雪花生成 ===================== */
+function createSnow() {
+    for (let i = 0; i < 25; i++) {
+        let s = document.createElement("div");
+        s.className = "snowflake";
+        s.innerHTML = "❄";
+        s.style.left = Math.random() * 100 + "vw";
+        s.style.animationDuration = (5 + Math.random() * 5) + "s";
+        s.style.fontSize = (12 + Math.random() * 18) + "px";
+        document.body.appendChild(s);
+    }
+}
+
+/* ===================== 初始化 ===================== */
+createSnow();
 fillCards();
 </script>
 
