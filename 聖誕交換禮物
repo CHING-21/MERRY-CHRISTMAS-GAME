@@ -3,120 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>聖誕交換禮物 - 抽籤遊戲</title>
+<title>抽籤遊戲</title>
+
+<!-- Cute Font -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-/* ====== 基本設定 ====== */
+/* ======== 可愛風全局 ======== */
 body {
     margin: 0;
-    font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(#cc2b5e, #753a88);
+    font-family: 'Baloo 2', sans-serif;
+    background: linear-gradient(#b3e5fc, #e1f5fe);
     min-height: 100vh;
     text-align: center;
     overflow-x: hidden;
+    color: #333;
     position: relative;
-    color: white;
 }
 
-/* ====== 雪花特效 ====== */
-@keyframes snow {
-    0% {transform: translateY(-10vh) translateX(0);}
-    100% {transform: translateY(110vh) translateX(20px);}
-}
-.snowflake {
+/* ======== 卡通雪地背景（CSS） ======== */
+.background {
     position: fixed;
-    top: -10vh;
-    color: white;
-    font-size: 1.2em;
-    opacity: 0.8;
-    animation: snow linear infinite;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    background: url('https://i.imgur.com/zVZ4vjY.png') repeat-x;
+    background-size: cover;
     pointer-events: none;
+    z-index: -1;
 }
 
-/* ====== 標題 ====== */
+/* ======== 標題 ======== */
 h1 {
     margin-top: 20px;
-    font-size: 40px;
-    text-shadow: 0 0 10px #fff, 0 0 20px gold;
+    font-size: 36px;
+    font-weight: 600;
+    color: #d32f2f;
+    text-shadow: 0 0 8px white;
 }
 
-/* ====== 重抽按鈕 ====== */
+/* ======== 一鍵重抽按鈕 ======== */
 #resetBtn {
     margin-top: 10px;
-    padding: 12px 25px;
+    padding: 12px 26px;
     border: none;
-    background: #ffeb3b;
-    color: #b71c1c;
+    background: #ffca28;
+    color: #5d4037;
     font-size: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 #resetBtn:hover {
-    background: #fff176;
+    background: #ffe082;
 }
 
-/* ====== 分類標籤 ====== */
+/* ======== 分類標籤 ======== */
 .label {
     margin-top: 15px;
     font-size: 22px;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(255,255,255,0.6);
 }
 
-/* ====== 卡片網格 ====== */
+/* ======== 卡片區塊 ======== */
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    width: 90%;
+    gap: 12px;
+    width: 92%;
     max-width: 900px;
-    margin: 15px auto;
+    margin: 20px auto;
 }
 
-/* ====== 卡片樣式 ====== */
+/* ======== 卡片樣式 ======== */
 .card {
     background: white;
-    color: #333;
-    border-radius: 12px;
-    padding: 25px 0;
+    border-radius: 14px;
+    padding: 35px 0;
     font-size: 20px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.3s, background 0.3s, color 0.3s;
+    transition: transform 0.25s, background 0.25s, color 0.25s;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     position: relative;
+    color: transparent; /* 預設牌面無字 */
 }
 
-/* 抽籤球特效 */
-@keyframes pop {
-    0% {transform: scale(0.5);}
-    70% {transform: scale(1.2);}
-    100% {transform: scale(1);}
+/* 小小浮起效果 */
+.card:hover {
+    transform: translateY(-4px);
 }
 
+/* ======== 抽籤球動畫 ======== */
+.ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 45px;
+    height: 45px;
+    background: #ff5252;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    animation: popBall 0.5s ease-out forwards;
+}
+
+@keyframes popBall {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    70% { transform: translate(-50%, -50%) scale(1.3); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 翻開後的牌 */
 .card.revealed {
-    background: #ffebcd;
-    color: #b71c1c;
-    animation: pop 0.4s ease-out;
+    background: #fff8d6;
+    color: #d32f2f;
 }
-
-/* 卡片 hover */
-.card:hover { transform: scale(1.08); }
 
 </style>
 </head>
 
 <body>
-<h1>🎁 聖誕交換禮物抽籤 🎄</h1>
+
+<div class="background"></div>
+
+<h1>抽籤遊戲 🎁</h1>
 <button id="resetBtn">🔄 一鍵重抽</button>
 
-<div class="label">第 1 & 2 行（形容詞組）</div>
+<div class="label">第 1 & 2 行（形容詞）</div>
 <div id="groupA" class="grid"></div>
 
-<div class="label">第 3 行（顏色組）</div>
+<div class="label">第 3 行（顏色）</div>
 <div id="groupB" class="grid"></div>
 
 <script>
@@ -141,7 +167,7 @@ const colors = [
 "天空藍","淺粉","葡萄紫"
 ];
 
-/* ===================== 工具：洗牌 ===================== */
+/* 洗牌 */
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -150,7 +176,7 @@ function shuffle(arr) {
     return arr;
 }
 
-/* ===================== 產生卡片 function ===================== */
+/* 製作卡片組 */
 function fillCards() {
     document.getElementById("groupA").innerHTML = "";
     document.getElementById("groupB").innerHTML = "";
@@ -162,28 +188,48 @@ function fillCards() {
     createCards("groupB", pickB);
 }
 
+/* 建立卡片 */
 function createCards(containerId, items) {
     let container = document.getElementById(containerId);
 
     items.forEach(item => {
         let card = document.createElement("div");
         card.className = "card";
-        card.textContent = "點我抽籤";
+        card.textContent = "";  // 牌面無字
 
-        // 點擊翻牌 / 再點擊重新抽這一格
         card.addEventListener("click", () => {
+            // 若未翻開 → 播抽籤球動畫
             if (!card.classList.contains("revealed")) {
-                card.classList.add("revealed");
-                card.textContent = item;
+
+                let ball = document.createElement("div");
+                ball.className = "ball";
+                ball.textContent = "🎲"; // 抽籤球
+                card.appendChild(ball);
+
+                setTimeout(() => {
+                    ball.remove();
+                    card.classList.add("revealed");
+                    card.textContent = item;
+                }, 550);
+
             } else {
-                // 換另一個不重複的隨機題目
+                // 單格重抽
                 let source = containerId === "groupA" ? adjectives : colors;
                 let newItem;
                 do {
                     newItem = source[Math.floor(Math.random() * source.length)];
                 } while (newItem === card.textContent);
 
-                card.textContent = newItem;
+                // 動畫
+                let ball = document.createElement("div");
+                ball.className = "ball";
+                ball.textContent = "🎲";
+                card.appendChild(ball);
+
+                setTimeout(() => {
+                    ball.remove();
+                    card.textContent = newItem;
+                }, 550);
             }
         });
 
@@ -191,24 +237,10 @@ function createCards(containerId, items) {
     });
 }
 
-/* ===================== 一鍵重抽 ===================== */
+/* 一鍵重抽 */
 document.getElementById("resetBtn").addEventListener("click", fillCards);
 
-/* ===================== 雪花生成 ===================== */
-function createSnow() {
-    for (let i = 0; i < 25; i++) {
-        let s = document.createElement("div");
-        s.className = "snowflake";
-        s.innerHTML = "❄";
-        s.style.left = Math.random() * 100 + "vw";
-        s.style.animationDuration = (5 + Math.random() * 5) + "s";
-        s.style.fontSize = (12 + Math.random() * 18) + "px";
-        document.body.appendChild(s);
-    }
-}
-
-/* ===================== 初始化 ===================== */
-createSnow();
+/* 初始化 */
 fillCards();
 </script>
 
